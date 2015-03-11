@@ -45,6 +45,10 @@ module.exports = {
 		clientSecret: process.env.GITHUB_SECRET || 'APP_SECRET',
 		callbackURL: '/auth/github/callback'
 	},
+	soundcloud: {
+		clientID: process.env.SOUNDCLOUD_ID || 'APP_ID',
+		clientSecret: process.env.SOUNDCLOUD_SECRET || 'APP_SECRET'
+	},
 	mailer: {
 		from: process.env.MAILER_FROM || 'MAILER_FROM',
 		options: {
