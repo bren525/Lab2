@@ -19,7 +19,10 @@ angular.module('core').factory('soundcloud', ['$q',
         };
 
         factory.fetchWidget = function(soundsUrl){
-            SC.oEmbed(soundsUrl, {color:'ff0066', maxheight:'120px', maxwidth:'1122px'},  document.getElementById('putTheWidgetHere'));
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+
+            SC.oEmbed(soundsUrl, {color:'ff0066', maxheight:.125*vh + 'px', maxwidth:3*vw/4 - 30 + 'px'},  document.getElementById('putTheWidgetHere'));
         };
 
         return factory;
