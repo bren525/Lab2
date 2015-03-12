@@ -7,7 +7,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.authentication = Authentication;
 		$scope.soundcloud = soundcloud;
 
-		$scope.search = function () {
+		$scope.searchSongs = function () {
 			console.log($scope.searchQuery);
 			$scope.soundcloud.fetchTracks($scope.searchQuery).then(function (tracks){
 				$scope.sidebarItems = tracks.slice(0,15);
