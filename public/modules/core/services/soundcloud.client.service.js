@@ -1,8 +1,10 @@
 'use strict';
 
 
-angular.module('core').factory('soundcloud', [
-    function(){
+angular.module('core').factory('soundcloud', ['$q',
+    function($q){
+        var fetchDeferred = $q.defer();
+
         var factory = {};
 
         SC.initialize({
@@ -11,14 +13,15 @@ angular.module('core').factory('soundcloud', [
 
         factory.fetchTracks = function(query){
             SC.get('/tracks', {q:query, license: 'cc-by-sa'}, function(tracks){
-                console.log(tracks);
-                return tracks;
+                fetchDeferred.resolve(tracks);
             });
+            return fetchDeferred.promise;
         };
 
         factory.fetchWidget = function(soundsUrl){
-            SC.oEmbed(soundsUrl, {color:'ff0066'},  document.getElementById('putTheWidgetHere'));
+            SC.oEmbed(soundsUrl, {color:'ff0066', maxheight:'120px', maxwidth:'1122px'},  document.getElementById('putTheWidgetHere'));
         };
+
         return factory;
     }
 ]);

@@ -1,14 +1,25 @@
-.well.sidebar, .well.map {
+.right-side {
+	text-align: center;
+}
+
+.well.map {
 	margin-top: calc(60px + 2.5vh);
 	margin-bottom: 2.5vh;
-	min-height: calc(95vh - 60px);
+	min-height: calc(80vh - 60px);
 
 }
 
 .sidebar {
+	margin-top: calc(60px + 2.5vh);
+	margin-bottom: 2.5vh;
+	min-height: calc(95vh - 60px);
 	text-align: center;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
+}
+
+.iframe {
+	float: right;
 }
