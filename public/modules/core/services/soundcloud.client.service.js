@@ -3,8 +3,6 @@
 
 angular.module('core').factory('soundcloud', ['$q',
     function($q){
-        var fetchDeferred = $q.defer();
-
         var factory = {};
 
         SC.initialize({
@@ -12,7 +10,8 @@ angular.module('core').factory('soundcloud', ['$q',
         });
 
         factory.fetchTracks = function(query){
-            SC.get('/tracks', {q:query, license: 'cc-by-sa'}, function(tracks){
+            var fetchDeferred = $q.defer();
+            SC.get('/tracks', {q:query}, function(tracks){
                 fetchDeferred.resolve(tracks);
             });
             return fetchDeferred.promise;
