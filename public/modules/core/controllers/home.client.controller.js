@@ -18,68 +18,86 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.soundcloud.fetchWidget(tracks[0].uri);
 		});
 
-		var map;
-		var service;
 		var foundPlaces = [];
-		function initialize(){
+		function initializeMap(lat,lng){
+			var map;
+			var service;
+			var searchBox;
+			var infowindow = new google.maps.InfoWindow();
 			var mapOptions = {
-			  center: new google.maps.LatLng(42.364506, -71.038887),
-			  zoom: 10
+			  center: new google.maps.LatLng(lat, lng),
+			  zoom: 13
 			};
 			map = new google.maps.Map(document.getElementById("map-canvas"),
 			mapOptions);
 			
 			service = new google.maps.places.PlacesService(map);
-			
+			var input = (document.getElementById('mapSearchBar'));
+  			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-		}
-		initialize();
+  			searchBox = new google.maps.places.SearchBox((input));
 
-		function createPlace(place) {
-			console.log(place.place_id);
-			var marker = new google.maps.Marker({
-			    map: map,
-			    position: place.geometry.location
-			    ,place: {placeId: place.place_id, location: place.geometry.location}
-		 	});
-		 	var infowindow = new google.maps.InfoWindow();
-		 	google.maps.event.addListener(marker, 'click', function() {
-		 		infowindow.setContent(place.name +" \n"+place.formatted_address);
-		 		infowindow.open(map, marker);
-	    		map.setZoom(16);
-	    		map.panTo(marker.getPosition());
-  			});
-		 	return marker;
-		}
-		function clearPlaces(){
-			for (var i = 0; i < foundPlaces.length;i++){
-				foundPlaces[i].setMap(null);
+  			function createPlace(place) {
+				var marker = new google.maps.Marker({
+				    map: map,
+				    title: place.name,
+				    position: place.geometry.location
+			 	});
+
+			 	infowindow.close();
+
+			 	google.maps.event.addListener(marker, 'click', function() {
+			 		infowindow.setContent("<div class=\"infowindow\"><h5>"+ place.name +"</h5>"+place.formatted_address+"</div>");
+			 		infowindow.open(map, marker);
+		    		/*map.setZoom(16);
+		    		map.panTo(marker.getPosition());*/
+	  			});
+
+				return {place:place, marker:marker};
 			}
-			foundPlaces = [];
-		}
 
-		function displaySearch(results, status) {
-			clearPlaces();
-			if (status == google.maps.places.PlacesServiceStatus.OK) {
+			function clearPlaces(){
+				for (var i = 0; i < foundPlaces.length;i++){
+					foundPlaces[i].marker.setMap(null);
+				}
+				foundPlaces = [];
+			}
+
+			function displaySearch() {
+				var results = searchBox.getPlaces();
+				var bounds = new google.maps.LatLngBounds();
+				clearPlaces();
 				console.log(results);
 				for (var i = 0; i < results.length; i++) {
 					foundPlaces.push(createPlace(results[i]));
+					bounds.extend(results[i].geometry.location);
 				}
+				map.fitBounds(bounds);
 			}
+			
+			google.maps.event.addListener(searchBox, 'places_changed', displaySearch);
+			
+			google.maps.event.addListener(map, 'bounds_changed', function() {
+			    var searchBounds = map.getBounds();
+			    searchBox.setBounds(searchBounds);
+			});
+			
+
 		}
-		
-		$scope.search = function(){
-			console.log($scope.searchText);
-			var request = {
-				location: map.getCenter(),
-				radius: '500',
-				query: $scope.searchText
-			};
-			service.textSearch(request, displaySearch);
+		if(navigator.geolocation){
+			navigator.geolocation.getCurrentPosition(function(position){
+				console.log('geolocate ',position);
+				initializeMap(position.coords.latitude,position.coords.longitude);
+			},
+			function(err){
+				initializeMap(41.9000,12.5000);
+			}
+			);
+		}
+		else{
+			initializeMap(41.9000,12.5000);
 		}
 
-		
-    	console.log(map);
 	}
 	
 ]);
