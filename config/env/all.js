@@ -6,6 +6,13 @@ module.exports = {
 		description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
 		keywords: 'mongodb, express, angularjs, node.js, mongoose, passport'
 	},
+	db: {
+		uri: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean',
+		options: {
+			user: '',
+			pass: ''
+		}
+	},
 	port: process.env.PORT || 3000,
 	templateEngine: 'swig',
 	// The secret should be set to a non-guessable string that
