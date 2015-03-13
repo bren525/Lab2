@@ -14,8 +14,8 @@ module.exports = function(app) {
 
 	app.route('/places/:placeId')
 		.get(places.read)
-		.put(users.requiresLogin, places.hasAuthorization, places.update)
-		.delete(users.requiresLogin, places.hasAuthorization, places.delete);
+		.put(users.requiresLogin, places.update)
+		.delete(users.requiresLogin, places.delete);
 
 	// Finish by binding the place middleware
 	app.param('placeId', places.placeByID);

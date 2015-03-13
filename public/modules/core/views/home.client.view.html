@@ -8,7 +8,7 @@
 				</form>
 				<div class="sidebar-items">
 					<div ng-repeat="sidebarItem in sidebarItems">
-						<button class="btn btn-raised btn-primary sidebar-item {{sidebarItem.class}}">{{sidebarItem.title}}</button>
+						<button ng-click="sidebarItemAction(sidebarItem)"class="btn btn-raised btn-primary sidebar-item {{sidebarItem.class}}">{{sidebarItem.title}}</button>
 					</div>
 				</div>
 			</div>
@@ -17,7 +17,6 @@
 		<div class="col-md-9 right-side">
 			<input id="mapSearchBar" ng-model="searchText" type="text" />
 			<div id="map-canvas" class="well map">
-				
 			</div>
 			<div id='putTheWidgetHere'></div>
 		</div>

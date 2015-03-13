@@ -12,19 +12,31 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			console.log($scope.searchQuery);
 			$scope.soundcloud.fetchTracks($scope.searchQuery).then(function (tracks){
 				$scope.sidebarItems = tracks.slice(0,15);
-				
+				$scope.mode = "searching";
 			});
 		};
 
 		$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
 			$scope.soundcloud.fetchWidget(tracks[0].uri);
+			$scope.mode = "playing";
 		});
 
+		$scope.sidebarItemAction = function (sidebarItem) {
+			if ($scope.mode == "searching"){
+				$scope.place.playlist.push(sidebarItem);
+				$scope.updatePlace();
+				$scope.mode = "playing";
+				$scope.sidebarItems = $scope.place.playlist;
+			} else if ($scope.mode == "playing") {
+				$scope.soundcloud.fetchWidget(sidebarItem.uri);
+			}
+			console.log(sidebarItem);
+		};
 
 		$scope.updatePlace = function(){
 			var place = $scope.place;
-
-			place.$update(function () {
+			console.log(place);
+			place.$update({placeId: place.placeId}, function () {
 			}, function (errorResponse){
 				$scope.error = errorResponse.data.message;
 			});
@@ -39,7 +51,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			});
 
 			place.$save(function (response) {
-				$scope.place = newPlace;
+				$scope.place = response;
 				$scope.sideBarItems = $scope.place.playlist;
 			}, function (errorResponse){
 				$scope.error = errorResponse.data.message;
@@ -55,7 +67,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					createPlace(clickedPlace);
 
 				} else {
-					$scope.place = {title:match.title,placeId:match.placeId,playlist:match.playlist};
+					$scope.place = match;
 					console.log("place",$scope.place);
 					$scope.sideBarItems = $scope.place.playlist;
 				};
