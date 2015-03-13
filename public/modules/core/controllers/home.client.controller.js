@@ -40,7 +40,12 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		};
 
 		function playNext () {
-			$scope.widget.load($scope.place.playlist.indexOf($scope.widget.getCurrentSound())+1);
+			var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
+			if (index < $scope.place.playlist.length){
+				$scope.widget.load($scope.place.playlist[index+1])
+			} else {
+				$scope.widget.load($scope.place.playlist[0]);
+			}
 		}
 
 		$scope.updatePlace = function(){
