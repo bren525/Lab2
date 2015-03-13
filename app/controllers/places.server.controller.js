@@ -5,113 +5,113 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
-	Article = mongoose.model('Article'),
+	Place = mongoose.model('Place'),
 	_ = require('lodash');
 
 /**
- * Create a article
+ * Create a place
  */
 exports.create = function(req, res) {
-	var article = new Article(req.body);
-	article.user = req.user;
+	var place = new Place(req.body);
+	place.user = req.user;
 
-	article.save(function(err) {
+	place.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.json(article);
+			res.json(place);
 		}
 	});
 };
 
 /**
- * Show the current article
+ * Show the current place
  */
 exports.read = function(req, res) {
-	res.json(req.article);
+	res.json(req.place);
 };
 
 /**
- * Update a article
+ * Update a place
  */
 exports.update = function(req, res) {
-	var article = req.article;
+	var place = req.place;
 
-	article = _.extend(article, req.body);
+	place = _.extend(place, req.body);
 
-	article.save(function(err) {
+	place.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.json(article);
+			res.json(place);
 		}
 	});
 };
 
 /**
- * Delete an article
+ * Delete an place
  */
 exports.delete = function(req, res) {
-	var article = req.article;
+	var place = req.place;
 
-	article.remove(function(err) {
+	place.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.json(article);
+			res.json(place);
 		}
 	});
 };
 
 /**
- * List of Articles
+ * List of Places
  */
 exports.list = function(req, res) {
-	Article.find().sort('-created').populate('user', 'displayName').exec(function(err, articles) {
+	Place.find().sort('-created').populate('user', 'displayName').exec(function(err, places) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.json(articles);
+			res.json(places);
 		}
 	});
 };
 
 /**
- * Article middleware
+ * Place middleware
  */
-exports.articleByID = function(req, res, next, id) {
+exports.placeByID = function(req, res, next, id) {
 
 	if (!mongoose.Types.ObjectId.isValid(id)) {
 		return res.status(400).send({
-			message: 'Article is invalid'
+			message: 'Place is invalid'
 		});
 	}
 
-	Article.findById(id).populate('user', 'displayName').exec(function(err, article) {
+	Place.findById(id).populate('user', 'displayName').exec(function(err, place) {
 		if (err) return next(err);
-		if (!article) {
+		if (!place) {
 			return res.status(404).send({
-				message: 'Article not found'
+				message: 'Place not found'
 			});
 		}
-		req.article = article;
+		req.place = place;
 		next();
 	});
 };
 
 /**
- * Article authorization middleware
+ * Place authorization middleware
  */
 exports.hasAuthorization = function(req, res, next) {
-	if (req.article.user.id !== req.user.id) {
+	if (req.place.user.id !== req.user.id) {
 		return res.status(403).send({
 			message: 'User is not authorized'
 		});
