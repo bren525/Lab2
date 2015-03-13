@@ -2,7 +2,7 @@
 
 
 angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'soundcloud','places',
-	function($scope, Authentication, soundcloud) {
+	function($scope, Authentication, soundcloud, places) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
 		$scope.soundcloud = soundcloud;
