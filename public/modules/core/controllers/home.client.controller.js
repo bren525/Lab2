@@ -44,7 +44,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			});
 		};
 
-		$scope.sidebarItemAction = function (sidebarItem, index) {
+		$scope.sidebarItemAction = function (sidebarItem) {
 			if ($scope.mode == 'searching'){
 				$scope.place.playlist.push(sidebarItem);
 				$scope.updatePlace();
@@ -52,7 +52,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == 'playing') {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
-				$scope.songIndex = index;
+				$scope.songIndex = $scope.place.playlist.indexOf(sidebarItem);
 			}
 			console.log(sidebarItem);
 		};
