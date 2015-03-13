@@ -18,12 +18,17 @@ angular.module('core').factory('soundcloud', ['$q',
         };
 
         factory.fetchWidget = function(soundsUrl){
+            var widgetDeferred = $q.defer();
             var vw = window.innerWidth;
             var vh = window.innerHeight;
 
-            SC.oEmbed(soundsUrl, {color:'ff0066', maxheight:.125*vh + 'px', maxwidth:3*vw/4 - 30 + 'px'},  document.getElementById('putTheWidgetHere'));
+            SC.oEmbed(soundsUrl, {color:'ff0066',  maxheight:.125*vh + 'px', maxwidth:3*vw/4 - 30 + 'px'}, function (embed){
+                $("#putTheWidgetHere").replaceWith(embed.html);
+                var widgetElement = $('iframe')[0];
+                widgetDeferred.resolve(SC.Widget(widgetElement));
+            });
+            return widgetDeferred.promise;
         };
-
         return factory;
     }
 ]);
