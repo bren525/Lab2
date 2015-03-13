@@ -7,7 +7,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.authentication = Authentication;
 		$scope.soundcloud = soundcloud;
 		$scope.places = places;
-		
+
 		function initWidget () {
 			$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
 				$scope.widgetPromise = $scope.soundcloud.fetchWidget(tracks[0].uri);
