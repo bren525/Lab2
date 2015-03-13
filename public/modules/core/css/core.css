@@ -27,14 +27,19 @@
 	-ms-overflow-style: none;
 }
 
-.sidebar-item {
+.btn.btn-primary.sidebar-item {
 	width: 90%;
 	height: auto;
 	margin-top: 2.5px;
 	margin-bottom:2.5px;
 	white-space: normal;
-	background-color: #58BEDB;
+	background-color: #46AAC7;
 }
+.container-fluid.ng-scope{
+	background-color: #9243CF;
+}
+
+
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
