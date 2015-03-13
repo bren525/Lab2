@@ -35,6 +35,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					$scope.mode = 'playing';
 				});
 			});
+		}
 
 		$scope.searchSongs = function () {
 			console.log($scope.searchQuery);
