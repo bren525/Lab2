@@ -3,6 +3,9 @@
 		position: fixed;
 	}
 }
+.undecorated-link {
+	margin-top = 5vh;
+}
 .remove-account-container {
 	display: inline-block;
 	position: relative;
