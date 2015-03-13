@@ -18,10 +18,13 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					$scope.widget.bind(SC.Widget.Events.FINISH, function () {
 						console.log('playing next');
 						var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
+						console.log('index');
 						if (index < $scope.place.playlist.length-1){
 							$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
+							console.log($scope.place.playlist[index+1]);
 						} else {
 							$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
+							console.log($scope.place.playlist[0]);
 						}
 					});
 					if ($scope.place.playlist){
