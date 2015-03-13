@@ -21,8 +21,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 						console.log($scope.songIndex);
 						if ($scope.songIndex < $scope.place.playlist.length-1){
 							$scope.songIndex += 1
-							$scope.widget.load($scope.place.playlist[songIndex].uri, {auto_play: true})
-							console.log($scope.place.playlist[songIndex]);
+							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true})
+							console.log($scope.place.playlist[$scope.songIndex]);
 						} else {
 							$scope.songIndex = 0;
 							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true});
