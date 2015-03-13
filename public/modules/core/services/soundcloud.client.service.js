@@ -6,7 +6,7 @@ angular.module('core').factory('soundcloud', ['$q',
         var factory = {};
 
         SC.initialize({
-            client_id: 'eef9223028bfc7455de4df130e2bf612'
+            client_id: '78f350a5ac9719879919f51d3cc0ef36' //'eef9223028bfc7455de4df130e2bf612'
         });
 
         factory.fetchTracks = function(query){

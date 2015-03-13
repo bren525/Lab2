@@ -8,15 +8,21 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.soundcloud = soundcloud;
 		$scope.places = places;
 
-		$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
-			$scope.widgetPromise = $scope.soundcloud.fetchWidget(tracks[0].uri);
-			$scope.widgetPromise.then(function (widget) {
-				console.log(widget);
-				$scope.widget = widget;
-				$scope.widget.pause();
+		function initWidget () {
+			$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
+				$scope.widgetPromise = $scope.soundcloud.fetchWidget(tracks[0].uri);
+				$scope.widgetPromise.then(function (widget) {
+					console.log(widget);
+					$scope.widget = widget;
+					$scope.widget.pause();
+					$scope.widget.bind(SC.Widget.Events.FINISH, playNext());
+					if ($scope.place.playlist){
+						$scope.widget.load($scope.place.playlist[0].uri);
+					}
+				});
+				$scope.mode = "playing";
 			});
-			$scope.mode = "playing";
-		});
+		}
 
 		$scope.searchSongs = function () {
 			console.log($scope.searchQuery);
@@ -34,13 +40,18 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == "playing") {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
-				$scope.widget.bind(SC.Widget.Events.FINISH, playNext())
 			}
 			console.log(sidebarItem);
 		};
 
 		function playNext () {
-			$scope.widget.load($scope.place.playlist.indexOf($scope.widget.getCurrentSound())+1);
+			console.log("playing next");
+			var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
+			if (index < $scope.place.playlist.length){
+				$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
+			} else {
+				$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
+			}
 		}
 
 		$scope.updatePlace = function(){
@@ -161,10 +172,12 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
   						infowindow.setContent("<div class=\"infowindow\"><h5>"+ details.name +"</h5>"+details.formatted_address+"</div>");
   						infowindow.open(map,initMarker.marker);
   						checkPlaceInBase({title:results[0].name,placeId:results[0].place_id});
+						initWidget();
   					});
   					
   				}else{
-  					//checkPlaceInBase({title:"Franklin W. Olin College of Engineering",placeId:"ChIJu_Vj-z-B44kRW8PY7p4iOKA"});
+  					checkPlaceInBase({title:"Franklin W. Olin College of Engineering",placeId:"ChIJu_Vj-z-B44kRW8PY7p4iOKA"});
+					initWidget();
   				}
   			});
 
