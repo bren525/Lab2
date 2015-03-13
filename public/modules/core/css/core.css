@@ -38,10 +38,13 @@
 	margin-top: 2.5px;
 	margin-bottom:2.5px;
 	white-space: normal;
-	background-color: #46AAC7;
+	background-color: #6EA4FA;
 }
 .container-fluid.ng-scope {
-	background-color: #9243CF;
+	background-color: #6EA4FA;;
+}
+.btn.btn-primary.sidebar-item.btn-raised {
+	background-color: #4889F0;
 }
 
 #search-box {

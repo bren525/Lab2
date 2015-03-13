@@ -22,12 +22,13 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 						if ($scope.songIndex < $scope.place.playlist.length-1){
 							$scope.songIndex += 1
 							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true})
-							console.log($scope.place.playlist[$scope.songIndex]);
+							console.log("songIndex",$scope.songIndex);
 						} else {
 							$scope.songIndex = 0;
 							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true});
 							console.log($scope.place.playlist[$scope.songIndex]);
 						}
+						$scope.$apply();
 					});
 					if ($scope.place.playlist){
 						$scope.widget.load($scope.place.playlist[$scope.songIndex].uri);
@@ -54,6 +55,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			} else if ($scope.mode == 'playing') {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
 				$scope.songIndex = $scope.place.playlist.indexOf(sidebarItem);
+				console.log("songIndex",$scope.songIndex);
 			}
 			console.log(sidebarItem);
 		};
