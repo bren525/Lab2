@@ -8,6 +8,16 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.soundcloud = soundcloud;
 		$scope.places = places;
 
+		$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
+			$scope.widgetPromise = $scope.soundcloud.fetchWidget(tracks[0].uri);
+			$scope.widgetPromise.then(function (widget) {
+				console.log(widget);
+				$scope.widget = widget;
+				$scope.widget.pause();
+			});
+			$scope.mode = "playing";
+		});
+
 		$scope.searchSongs = function () {
 			console.log($scope.searchQuery);
 			$scope.soundcloud.fetchTracks($scope.searchQuery).then(function (tracks){
@@ -16,11 +26,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			});
 		};
 
-		$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
-			$scope.soundcloud.fetchWidget(tracks[0].uri);
-			$scope.mode = "playing";
-		});
-
 		$scope.sidebarItemAction = function (sidebarItem) {
 			if ($scope.mode == "searching"){
 				$scope.place.playlist.push(sidebarItem);
@@ -28,10 +33,15 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.mode = "playing";
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == "playing") {
-				$scope.soundcloud.fetchWidget(sidebarItem.uri);
+				$scope.widget.load(sidebarItem.uri, {auto_play: true});
+				$scope.widget.bind(SC.Widget.Events.FINISH, playNext())
 			}
 			console.log(sidebarItem);
 		};
+
+		function playNext () {
+			$scope.widget.load($scope.place.playlist.indexOf($scope.widget.getCurrentSound())+1);
+		}
 
 		$scope.updatePlace = function(){
 			var place = $scope.place;
@@ -68,8 +78,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 				} else {
 					$scope.place = match;
-					console.log("place",$scope.place);
 					$scope.sideBarItems = $scope.place.playlist;
+					$scope.mode = "playing";
 				};
 			});
 		};
@@ -86,7 +96,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			};
 			map = new google.maps.Map(document.getElementById("map-canvas"),
 			mapOptions);
-			
+
 			service = new google.maps.places.PlacesService(map);
 			var input = (document.getElementById('mapSearchBar'));
   			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -131,14 +141,13 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				}
 				map.fitBounds(bounds);
 			}
-			
+
 			google.maps.event.addListener(searchBox, 'places_changed', displaySearch);
-			
+
 			google.maps.event.addListener(map, 'bounds_changed', function() {
 			    var searchBounds = map.getBounds();
 			    searchBox.setBounds(searchBounds);
 			});
-			
 
 		}
 		if(navigator.geolocation){
@@ -154,8 +163,5 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		else{
 			initializeMap(41.9000,12.5000);
 		}
-
-		
 	}
-	
 ]);

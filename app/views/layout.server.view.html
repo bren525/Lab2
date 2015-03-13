@@ -64,9 +64,12 @@
 	{% endfor %}
 	<!-- soundcloud sdk -->
 	<script src="//connect.soundcloud.com/sdk.js"></script>
+	<script src="https://w.soundcloud.com/player/api.js"></script>
+	<!-- material design js -->
+	<script> $.material.init() </script>
 	<!-- google maps api -->
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
-	
+
 	{% if process.env.NODE_ENV === 'development' %}
 	<!--Livereload script rendered -->
 	<script type="text/javascript" src="http://{{request.hostname}}:35729/livereload.js"></script>
