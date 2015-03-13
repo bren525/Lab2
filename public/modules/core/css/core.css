@@ -20,8 +20,7 @@
 	overflow: hidden;
 }
 .sidebar-items {
-	margin-top: 5vh;
-	max-height: 75vh;
+	max-height: 80%;
 	overflow-y: auto;
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
@@ -34,6 +33,7 @@
 	margin-top: 2.5px;
 	margin-bottom:2.5px;
 	white-space: normal;
+	background-color: #58BEDB;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -43,6 +43,7 @@
 .iframe {
 	float: right;
 }
+
 
 #mapSearchBar {
         background-color: #fff;
