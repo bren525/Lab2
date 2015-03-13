@@ -15,25 +15,26 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					console.log(widget);
 					$scope.widget = widget;
 					$scope.widget.pause();
+					$scope.songIndex=0
 					$scope.widget.bind(SC.Widget.Events.FINISH, function () {
 						console.log('playing next');
-						var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
-						console.log(index);
-						if (index < $scope.place.playlist.length-1){
-							$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
-							console.log($scope.place.playlist[index+1]);
+						console.log($scope.songIndex);
+						if ($scope.songIndex < $scope.place.playlist.length-1){
+							$scope.songIndex += 1
+							$scope.widget.load($scope.place.playlist[songIndex].uri, {auto_play: true})
+							console.log($scope.place.playlist[songIndex]);
 						} else {
-							$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
-							console.log($scope.place.playlist[0]);
+							$scope.songIndex = 0;
+							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true});
+							console.log($scope.place.playlist[$scope.songIndex]);
 						}
 					});
 					if ($scope.place.playlist){
-						$scope.widget.load($scope.place.playlist[0].uri);
+						$scope.widget.load($scope.place.playlist[$scope.songIndex].uri);
 					}
 					$scope.mode = 'playing';
 				});
 			});
-		}
 
 		$scope.searchSongs = function () {
 			console.log($scope.searchQuery);
@@ -43,7 +44,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			});
 		};
 
-		$scope.sidebarItemAction = function (sidebarItem) {
+		$scope.sidebarItemAction = function (sidebarItem, index) {
 			if ($scope.mode == 'searching'){
 				$scope.place.playlist.push(sidebarItem);
 				$scope.updatePlace();
@@ -51,6 +52,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == 'playing') {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
+				$scope.songIndex = index;
 			}
 			console.log(sidebarItem);
 		};
