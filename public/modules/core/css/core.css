@@ -19,6 +19,11 @@
 .sidebar-hider {
 	overflow: hidden;
 }
+
+.place-title {
+	margin-bottom: 5%;
+}
+
 .sidebar-items {
 	max-height: 80%;
 	overflow-y: auto;
@@ -35,11 +40,13 @@
 	white-space: normal;
 	background-color: #46AAC7;
 }
-.container-fluid.ng-scope{
+.container-fluid.ng-scope {
 	background-color: #9243CF;
 }
 
-
+#search-box {
+	margin-bottom: 5%;
+}
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
