@@ -12,7 +12,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			console.log($scope.searchQuery);
 			$scope.soundcloud.fetchTracks($scope.searchQuery).then(function (tracks){
 				$scope.sidebarItems = tracks.slice(0,15);
-				$scope.sidebarItems.class = "sidebar-search";
+				
 			});
 		};
 
@@ -20,15 +20,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.soundcloud.fetchWidget(tracks[0].uri);
 		});
 
-		function clickedPlace(place) {
-			console.log(place);
-			if (checkPlaceInBase(place) == false) {
-				createPlace(place);
-			}
-
-			$scope.sideBarItems = $scope.place.playlist;
-			$scope.sideBarItems.class = "sidebar-song";
-		};
 
 		$scope.updatePlace = function(){
 			var place = $scope.place;
@@ -41,7 +32,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 		function createPlace (newPlace) {
 			// Create new Place object
-			var place = new Places({
+			var place = new places({
 			 	placeId: newPlace.placeId,
 			 	title: newPlace.title,
 			 	playlist: [],
@@ -49,6 +40,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 			place.$save(function (response) {
 				$scope.place = newPlace;
+				$scope.sideBarItems = $scope.place.playlist;
 			}, function (errorResponse){
 				$scope.error = errorResponse.data.message;
 			});
@@ -56,15 +48,18 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 
 		function checkPlaceInBase (clickedPlace){
-			var match = Places.get({
+			$scope.places.get({
 				placeId: clickedPlace.placeId
-			});
+			},function (match) {
+				if (match.message == "Place not found") {
+					createPlace(clickedPlace);
 
-			if (match.length == 0) {
-				return false;
-			} else {
-				$scope.place = match;
-			};
+				} else {
+					$scope.place = {title:match.title,placeId:match.placeId,playlist:match.playlist};
+					console.log("place",$scope.place);
+					$scope.sideBarItems = $scope.place.playlist;
+				};
+			});
 		};
 
 		var foundPlaces = [];
@@ -98,7 +93,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			 	google.maps.event.addListener(marker, 'click', function() {
 			 		infowindow.setContent("<div class=\"infowindow\"><h5>"+ place.name +"</h5>"+place.formatted_address+"</div>");
 			 		infowindow.open(map, marker);
-			 		clickedPlace({title:place.name,placeId:place.place_id});
+			 		checkPlaceInBase({title:place.name,placeId:place.place_id});
 		    		/*map.setZoom(16);
 		    		map.panTo(marker.getPosition());*/
 	  			});

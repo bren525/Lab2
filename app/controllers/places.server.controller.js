@@ -30,6 +30,7 @@ exports.create = function(req, res) {
  * Show the current place
  */
 exports.read = function(req, res) {
+	console.log(req.place);
 	res.json(req.place);
 };
 
@@ -89,16 +90,16 @@ exports.list = function(req, res) {
  */
 exports.placeByID = function(req, res, next, id) {
 
-	if (!mongoose.Types.ObjectId.isValid(id)) {
+	/*if (!mongoose.Types.ObjectId.isValid(id)) {
 		return res.status(400).send({
 			message: 'Place is invalid'
 		});
-	}
+	}*/
 
-	Place.findById(id).populate('user', 'displayName').exec(function(err, place) {
+	Place.findOne({placeId:id}).exec(function(err, place) {
 		if (err) return next(err);
 		if (!place) {
-			return res.status(404).send({
+			return res.status(200).send({
 				message: 'Place not found'
 			});
 		}
