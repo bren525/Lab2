@@ -2,7 +2,19 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="well sidebar">
+				<form ng-submit="search()">
+					<label for="search-box"> Search Songs </label>
+					<input type="text" id="search-box" ng-model="searchQuery"/>
+				</form>
+				<div class="sidebar-hider">
+					<div class="sidebar-items">
+						<div ng-repeat="sidebarItem in sidebarItems" class="sidebar-item">
+							<button class ="btn btn-raised btn-primary">{{sidebarItem.title}} </button>
+						</div>
+					</div>
+				</div>
 			</div>
+
 		</div>
 		<div class="col-md-9 right-side">
 			<div class="well map">
