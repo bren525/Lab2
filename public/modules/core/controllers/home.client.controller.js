@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'soundcloud','places'
+angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'soundcloud','places',
 	function($scope, Authentication, soundcloud) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
@@ -19,16 +19,17 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.soundcloud.fetchTracks('local natives').then(function (tracks){
 			$scope.soundcloud.fetchWidget(tracks[0].uri);
 		});
-
 		function clickedPlace(place) {
 			console.log(place);
-			if !checkPlaceInBase(place) {
+			if checkPlaceInBase(place) == false {
+
 				createPlace(place);
 			}
 
 			$scope.sideBarItems = $scope.place.playlist;
-			$scope.sideBarItems.class = "sidebar-song"
-		}
+			$scope.sideBarItems.class = "sidebar-song";
+		};
+
 		$scope.updatePlace = function(){
 			var place = $scope.place;
 
@@ -55,15 +56,15 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 
 		function checkPlaceInBase (clickedPlace){
-			match = Places.get({
-				placeId: clickedPlace.placeId
+			var match = Places.get({
+				placeId: clickedPlace.placeId;
 			});
 
 			if match.length == 0 {
 				return false;
 			} else {
-				$scope.place = match
-			}
+				$scope.place = match;
+			};
 		};
 
 		var foundPlaces = [];
