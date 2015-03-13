@@ -14,6 +14,10 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				console.log(widget);
 				$scope.widget = widget;
 				$scope.widget.pause();
+				//$scope.widget.bind(SC.Widget.Events.FINISH, playNext());
+				if ($scope.place.playlist){
+					$scope.widget.load($scope.place.playlist[0].uri);
+				}
 			});
 			$scope.mode = "playing";
 		});
@@ -34,7 +38,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == "playing") {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
-				$scope.widget.bind(SC.Widget.Events.FINISH, playNext())
 			}
 			console.log(sidebarItem);
 		};
@@ -42,9 +45,9 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		function playNext () {
 			var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
 			if (index < $scope.place.playlist.length){
-				$scope.widget.load($scope.place.playlist[index+1])
+				$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
 			} else {
-				$scope.widget.load($scope.place.playlist[0]);
+				$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
 			}
 		}
 
