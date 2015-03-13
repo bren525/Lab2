@@ -15,12 +15,20 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					console.log(widget);
 					$scope.widget = widget;
 					$scope.widget.pause();
-					$scope.widget.bind(SC.Widget.Events.FINISH, playNext());
+					$scope.widget.bind(SC.Widget.Events.FINISH, function () {
+						console.log('playing next');
+						var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
+						if (index < $scope.place.playlist.length){
+							$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
+						} else {
+							$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
+						}
+					});
 					if ($scope.place.playlist){
 						$scope.widget.load($scope.place.playlist[0].uri);
 					}
+					$scope.mode = 'playing';
 				});
-				$scope.mode = 'playing';
 			});
 		}
 
@@ -44,15 +52,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			console.log(sidebarItem);
 		};
 
-		function playNext () {
-			console.log('playing next');
-			var index = $scope.place.playlist.indexOf($scope.widget.getCurrentSound());
-			if (index < $scope.place.playlist.length){
-				$scope.widget.load($scope.place.playlist[index+1].uri, {auto_play: true})
-			} else {
-				$scope.widget.load($scope.place.playlist[0].uri, {auto_play: true});
-			}
-		}
 
 		$scope.updatePlace = function(){
 			var place = $scope.place;
