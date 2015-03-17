@@ -10,7 +10,7 @@ module.exports = function(app) {
 	// Article Routes
 	app.route('/places')
 		.get(places.list)
-		.post(users.requiresLogin, places.create);
+		.post(places.create);
 
 	app.route('/places/:placeId')
 		.get(places.read)
