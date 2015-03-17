@@ -38,11 +38,8 @@ exports.read = function(req, res) {
  * Update a place
  */
 exports.update = function(req, res) {
-	console.log("body", req.body);
 	var place = req.place;
-	console.log("proto place",place);
 	place = _.extend(place, req.body);
-	console.log("updated place",place)
 
 	place.save(function(err) {
 		if (err) {

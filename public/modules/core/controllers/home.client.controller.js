@@ -29,6 +29,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 							console.log($scope.place.playlist[$scope.songIndex]);
 						}
 						$scope.$apply();
+						console.log("applying changes");
 					});
 					if ($scope.place.playlist){
 						$scope.widget.load($scope.place.playlist[$scope.songIndex].uri);
@@ -54,19 +55,21 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.sidebarItems = $scope.place.playlist;
 			} else if ($scope.mode == 'playing') {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
-				$scope.songIndex = $scope.place.playlist.indexOf(sidebarItem);
+				$scope.songIndex = arrayObjectIndexOf($scope.place.playlist, sidebarItem);
 				console.log("songIndex",$scope.songIndex);
+				console.log(sidebarItem);
 			}
-			console.log(sidebarItem);
 		};
 
 
 		$scope.updatePlace = function(){
 			var place = $scope.place;
 			console.log(place);
-			place.$update({placeId: place.placeId}, function () {
+			place.$update({placeId: place.placeId}, function (response) {
+				$scope.place = response;
 			}, function (errorResponse){
 				$scope.error = errorResponse.data.message;
+				console.log($scope.error);
 			});
 		};
 
@@ -101,7 +104,17 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 				};
 			});
-		};
+		}
+
+		function arrayObjectIndexOf(arr, obj){
+			for(var i = 0; i < arr.length; i++){
+				if(angular.equals(arr[i], obj)){
+					return i;
+				}
+			};
+
+			return -1;
+		}
 
 		var foundPlaces = [];
 		function initializeMap(lat,lng){
