@@ -2,16 +2,25 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="well sidebar">
-				<h4 class="place-title">{{place.title}}</h4>
-				<form ng-submit="searchSongs()">
-					<label for="search-box"> Drop a Tune:  </label>
-					<input type="text" id="search-box" ng-model="searchQuery"/>
-				</form>
+				<h4 class="place-title">{{place.title}} <small> {{playlist.title}}</small> </h4>
+				<div ng-switch="mode">
+					<form ng-switch-when="playing" ng-submit="searchSongs()">
+						<label for="search-box"> Drop a Tune:  </label>
+						<input type="text" id="search-box" ng-model="$parent.searchQuery"/>
+					</form>
+					<form ng-switch-when="playlisting" ng-submit="addPlaylist()">
+						<label for="add-box"> Add Playlist:  </label>
+						<input type="text" id="add-box" ng-model="$parent.playlistName"/>
+					</form>
+				</div>
 				<div class="sidebar-items">
 					<div ng-repeat="sidebarItem in sidebarItems">
 						<button ng-click="sidebarItemAction(sidebarItem)" class="btn btn-primary  sidebar-item" ng-class="{'btn-raised': (songIndex===$index)&&(mode=== 'playing')}">{{sidebarItem.title}}</button>
 					</div>
 				</div>
+				<button ng-click="back()" class="btn btn-default btn-back">
+					  <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+				</button>
 			</div>
 		</div>
 		<div class="col-md-9 right-side">

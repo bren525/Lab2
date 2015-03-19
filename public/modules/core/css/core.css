@@ -43,11 +43,18 @@
 .container-fluid.ng-scope {
 	background-color: #6EA4FA;;
 }
+
 .btn.btn-primary.sidebar-item.btn-raised {
 	background-color: #4889F0;
 }
 
-#search-box {
+.btn.btn-default.btn-back {
+	position: absolute;
+	bottom: 2.5%;
+	left: 5%;
+	float: left;
+}
+#search-box, #add-box {
 	margin-bottom: 5%;
 }
 

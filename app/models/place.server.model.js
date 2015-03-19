@@ -16,7 +16,7 @@ var PlaceSchema = new Schema({
 	title: {
 		type: String,
 	},
-	playlist: {
+	playlists: {
 		type: Array,
 	}
 });

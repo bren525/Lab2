@@ -1,8 +1,8 @@
 'use strict';
 
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'soundcloud','places',
-	function($scope, Authentication, soundcloud, places) {
+angular.module('core').controller('HomeController', ['$scope', '$interval', 'Authentication', 'soundcloud','places',
+	function($scope, $interval, Authentication, soundcloud, places) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
 		$scope.soundcloud = soundcloud;
@@ -19,22 +19,30 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					$scope.widget.bind(SC.Widget.Events.FINISH, function () {
 						console.log('playing next');
 						console.log($scope.songIndex);
-						if ($scope.songIndex < $scope.place.playlist.length-1){
+						if ($scope.songIndex < $scope.playlist.songs.length-1){
 							$scope.songIndex += 1
-							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true})
+							$scope.widget.load($scope.playlist.songs[$scope.songIndex].uri, {auto_play: true})
 							console.log("songIndex",$scope.songIndex);
 						} else {
 							$scope.songIndex = 0;
-							$scope.widget.load($scope.place.playlist[$scope.songIndex].uri, {auto_play: true});
-							console.log($scope.place.playlist[$scope.songIndex]);
+							$scope.widget.load($scope.playlist.songs[$scope.songIndex].uri, {auto_play: true});
+							console.log($scope.playlist.songs[$scope.songIndex]);
 						}
 						$scope.$apply();
 						console.log("applying changes");
 					});
-					if ($scope.place.playlist){
-						$scope.widget.load($scope.place.playlist[$scope.songIndex].uri);
+					if ($scope.place.playlists.length > 0){
+						$scope.playlistIndex = 0;
+						$scope.playlist = $scope.place.playlists[$scope.playlistIndex];
+						$scope.sidebarItems = $scope.playlist.songs;
+						if ($scope.playlist.length > 0 ){
+							$scope.widget.load($scope.playlist.songs[$scope.songIndex].uri);
+						}
+						$scope.mode = 'playing';
 					}
-					$scope.mode = 'playing';
+					else {
+						$scope.mode = 'playlisting';
+					}
 				});
 			});
 		}
@@ -47,22 +55,53 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			});
 		};
 
+		$scope.addPlaylist = function () {
+			console.log($scope.playlistName);
+			var playlist = {};
+			playlist.title = $scope.playlistName;
+			playlist.user = window.user.displayname;
+			playlist.songs = [];
+			$scope.place.playlists.push(playlist);
+			updatePlace();
+			$scope.playlist = playlist;
+			$scope.playlistIndex = $scope.place.playlists.length-1;
+			console.log('playlistIndex:', $scope.playlistIndex);
+			$scope.mode = 'playing';
+			$scope.sidebarItems = $scope.playlist.songs;
+		}
+
 		$scope.sidebarItemAction = function (sidebarItem) {
-			if ($scope.mode == 'searching'){
-				$scope.place.playlist.push(sidebarItem);
-				$scope.updatePlace();
+			if ($scope.mode == 'playlisting'){
+				$scope.playlistIndex = arrayObjectIndexOf($scope.place.playlists, sidebarItem);
+				$scope.playlist = $scope.place.playlists[$scope.playlistIndex];
 				$scope.mode = 'playing';
-				$scope.sidebarItems = $scope.place.playlist;
+				$scope.sidebarItems = $scope.playlist.songs;
+			} else if ($scope.mode == 'searching'){
+				$scope.place.playlists[$scope.playlistIndex].songs.push(sidebarItem);
+				updatePlace();
+				$scope.playlist = $scope.place.playlists[$scope.playlistIndex];
+				$scope.mode = 'playing';
+				$scope.sidebarItems = $scope.playlist.songs;
+				console.log("Adding Song", $scope.sidebarItem.title);
 			} else if ($scope.mode == 'playing') {
 				$scope.widget.load(sidebarItem.uri, {auto_play: true});
-				$scope.songIndex = arrayObjectIndexOf($scope.place.playlist, sidebarItem);
+				$scope.songIndex = arrayObjectIndexOf($scope.playlist.songs, sidebarItem);
 				console.log("songIndex",$scope.songIndex);
 				console.log(sidebarItem);
 			}
 		};
 
+		$scope.back = function () {
+			if ($scope.mode == 'searching'){
+				$scope.mode = 'playing';
+				$scope.sidebarItems = $scope.playlist.songs;
+			} else if ($scope.mode == 'playing') {
+				$scope.mode = 'playlisting';
+				$scope.sidebarItems = $scope.place.playlists;
+			}
+		}
 
-		$scope.updatePlace = function(){
+		function updatePlace (){
 			var place = $scope.place;
 			console.log(place);
 			place.$update({placeId: place.placeId}, function (response) {
@@ -71,19 +110,31 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.error = errorResponse.data.message;
 				console.log($scope.error);
 			});
-		};
+		}
+
+		function syncPlace(){
+			$scope.places.get({placeId: $scope.place.placeId}, function (match){
+				if (match.message != 'Place not found'){
+					$scope.place = match;
+				} else {
+					console.log('Syncing Error!!!');
+				}
+			})
+		}
+		$interval(syncPlace, 5000);
 
 		function createPlace (newPlace) {
 			// Create new Place object
 			var place = new places({
 			 	placeId: newPlace.placeId,
 			 	title: newPlace.title,
-			 	playlist: [],
+			 	playlists: [],
 			});
 
 			place.$save(function (response) {
 				$scope.place = response;
-				$scope.sidebarItems = $scope.place.playlist;
+				$scope.sidebarItems = $scope.place.playlists;
+				$scope.mode = "playlisting";
 			}, function (errorResponse){
 				$scope.error = errorResponse.data.message;
 			});
@@ -94,14 +145,12 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.places.get({
 				placeId: clickedPlace.placeId
 			},function (match) {
-				if (match.message == 'Place not found') {
+				if (match.message === 'Place not found') {
 					createPlace(clickedPlace);
-
 				} else {
 					$scope.place = match;
-					$scope.sidebarItems = $scope.place.playlist;
-
-
+					$scope.sidebarItems = $scope.place.playlists;
+					$scope.mode = "playlisting";
 				};
 			});
 		}
@@ -116,6 +165,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			return -1;
 		}
 
+		
 		var foundPlaces = [];
 		function initializeMap(lat,lng){
 			var map;
@@ -148,6 +198,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			 		infowindow.setContent('<div class=\'infowindow\'><h5>'+ place.name +'</h5>'+place.formatted_address+'</div>');
 			 		infowindow.open(map, marker);
 			 		checkPlaceInBase({title:place.name,placeId:place.place_id});
+					$scope.$apply();
 	  			});
 
 				return {title:place.name, placeId:place.place_id, marker:marker};
